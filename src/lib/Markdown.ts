@@ -1,6 +1,6 @@
 export class Markdown {
     static _SpecialChars: Record<string, string> = {
-        "<br/>": "\n",
+        // "<br/>": "\n",
         "&emsp;": "\t",
     };
 
@@ -122,62 +122,83 @@ export class Markdown {
     };
 
     static HorizontalLine = (text: string): string => {
-        return text.replace(/^(?:-{3,}|\*{3,}|_{3,})\n/gm, (match) => {
+        return text.replace(/^(?:-{3,}|\*{3,}|_{3,})/gm, (match) => {
             return `<hr class="hr"/>`;
         });
     };
 
     static StrongText = (text: string): string => {
-        return text.replace(/\*\*([^*]+?)\*\*/gm, (match, innerText) => {
-            return `<strong>${innerText}</strong>`;
-        });
+        return text.replace(
+            /\*\*([^*]+?)\*\*(\s\s\n)?/gm,
+            (match, innerText, tab) => {
+                if (tab) return `<strong>${innerText}</strong></br>`;
+                return `<strong>${innerText}</strong>`;
+            },
+        );
     };
 
     static ItalicText = (text: string): string => {
-        return text.replace(/\*([^*]+?)\*/gm, (match, innerText) => {
-            return `<i>${innerText}</i>`;
-        });
+        return text.replace(
+            /\*([^*]+?)\*(\s\s\n)?/gm,
+            (match, innerText, tab) => {
+                if (tab) return `<i>${innerText}</i><br/>`;
+                return `<i>${innerText}</i>`;
+            },
+        );
     };
     static ItalicBoldText = (text: string): string => {
-        return text.replace(/\*\*\*([^*]+?)\*\*\*/gm, (match, innerText) => {
-            return `<strong><i>${innerText}</i></strong>`;
-        });
+        return text.replace(
+            /\*\*\*([^*]+?)\*\*\*(\s\s\n)?/gm,
+            (match, innerText, tab) => {
+                if (tab) return `<strong><i>${innerText}</i></strong><br/>`;
+                return `<strong><i>${innerText}</i></strong>`;
+            },
+        );
     };
     static StrikeThrough = (text: string): string => {
-        return text.replace(/~~([^~]+?)~~/gm, (match, innerText) => {
-            return `<span class="line-through">${innerText}</span>`;
-        });
+        return text.replace(
+            /~~([^~]+?)~~(\s\s\n)?/gm,
+            (match, innerText, tab) => {
+                if (tab)
+                    return `<span class="line-through">${innerText}</span><br/>`;
+                return `<span class="line-through">${innerText}</span>`;
+            },
+        );
     };
     static InlineCode = (text: string): string => {
-        return text.replace(/\`([^\`]+?)\`/gm, (match, innerText) => {
-            return `<code class="code">${innerText}</code>`;
-        });
+        return text.replace(
+            /\`([^\`]+?)\`(\s\s\n)?/gm,
+            (match, innerText, tab) => {
+                if (tab) return `<code class="code">${innerText}</code><br/>`;
+                return `<code class="code">${innerText}</code>`;
+            },
+        );
     };
 
     static Heading1 = (text: string): string => {
         return text.replace(/^#\s(.+?)$\n?/gm, (match, innerText) => {
-            return `<h1 class="text-4xl">${innerText}</h1>`;
+            return `<h1 class=" heading text-4xl">${innerText}</h1>`;
         });
     };
     static Heading2 = (text: string): string => {
         return text.replace(/^##\s(.+?)$\n?/gm, (match, innerText) => {
-            return `<h2 class="text-3xl">${innerText}</h2>`;
+            return `<h2 class=" heading text-3xl">${innerText}</h2>`;
         });
     };
     static Heading3 = (text: string): string => {
         return text.replace(/^###\s(.+?)$\n?/gm, (match, innerText) => {
-            return `<h3 class="text-2xl">${innerText}</h3>`;
+            return `<h3 class=" heading sm text-2xl">${innerText}</h3>`;
         });
     };
     static Heading4 = (text: string): string => {
         return text.replace(/^####\s(.+?)$\n?/gm, (match, innerText) => {
-            return `<h4 class="text-xl">${innerText}</h4>`;
+            return `<h4 class=" heading sm text-xl">${innerText}</h4>`;
         });
     };
 
     static BlockQuote = (text: string): string => {
         return text.replace(/^>>?\s(.+?)$\n?/gm, (match, innerText) => {
-            const html = `<blockquote class="italic font-semibold tracking-tight text-heading">"${innerText}"</blockquote>`;
+            const html = `<blockquote class="quote">"${innerText}"</blockquote>`;
             return this.Protect(html);
         });
     };
